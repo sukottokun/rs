@@ -1,0 +1,7 @@
+name = restaurant
+description = Restaurant module
+package = Custom
+core = 7.x
+configure = admin/config/custom/restaurant
+files[] = restaurant.module
+
