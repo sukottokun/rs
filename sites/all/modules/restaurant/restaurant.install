@@ -9,16 +9,11 @@
 /**
  * Implementation of hook_install().
  */
-function restaurant_install() {
-if (!db_table_exists('restaurants')) {
+function restaurant_schema() {
+  $schema = array();
   $schema['restaurants'] = array(
     'description' => 'Name, address, and image of restaurants.',
     'fields' => array(
-      'uid' => array(
-		'type' => 'int', 
-		'unsigned' => TRUE, 
-		'not null' => TRUE
-		),
       'nid' => array(
 		'type' => 'int', 
 		'unsigned' => TRUE, 
@@ -36,16 +31,19 @@ if (!db_table_exists('restaurants')) {
 		'default' => ''
 		),
       'image' => array(
-		'type' => 'blog',
+		'type' => 'blob',
 		'size' => 'big'
 		),
-      'timestamp' => array(
-		'type' => 'int', 
-		'unsigned' => TRUE, 
-		'not null' => TRUE, 
-		'default' => '0'
-		),
     ),
+   'primary key' => array('nid')',
   );
+return $schema;
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function restaurant_uninstall() {
+  variable_del('restaurant');
 }
 
