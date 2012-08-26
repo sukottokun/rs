@@ -35,7 +35,7 @@ function restaurant_schema() {
 		'size' => 'big'
 		),
     ),
-   'primary key' => array('nid')',
+   'primary key' => array('nid'),
   );
 return $schema;
 }
@@ -43,6 +43,7 @@ return $schema;
 /**
  * Implements hook_uninstall().
  */
+
 function restaurant_uninstall() {
   variable_del('restaurant');
 }
