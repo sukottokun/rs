@@ -13,29 +13,23 @@ function restaurant_schema() {
   $schema = array();
   $schema['restaurants'] = array(
     'description' => 'Name, address, and image of restaurants.',
-    'fields' => array(
-      'nid' => array(
-		'type' => 'int', 
-		'unsigned' => TRUE, 
-		'not null' => TRUE
-		),
+    'fields' => array( 
       'name' => array(
-		'type' => 'varchar', 
-		'length' => 32, 
-		'not null' => TRUE, 
-		'default' => ''
+      'type' => 'varchar',
+      'length' => 32,
+      'not null' => TRUE,
+      'default' => ''
 		),
       'address' => array(
-		'type' => 'varchar',
-		'length' => 256, 
-		'default' => ''
+      'type' => 'varchar',
+      'length' => 256,
+      'default' => ''
 		),
       'image' => array(
-		'type' => 'blob',
-		'size' => 'big'
+    	'type' => 'blob',
+      'size' => 'big'
 		),
     ),
-   'primary key' => array('nid'),
   );
 return $schema;
 }
