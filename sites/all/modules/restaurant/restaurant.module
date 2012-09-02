@@ -92,7 +92,7 @@ function page_restaurants () {
     $fid = $row->image; //seems to return the $fid I want
     $image_object = file_load($fid); //not returnin and object
     $path = $image_object->uri; // not working; not an object?
-    dpr($fid);
+
 
   $table_rows[] = array(
       'data' => array(
@@ -105,7 +105,7 @@ function page_restaurants () {
               'class'=>'col-address',
           ),
           'image' => array(
-              'data'=> 'in progress',
+              'data'=> theme('image',array('path' => $path)),
               'class'=>'col-image',
           ),
       )
