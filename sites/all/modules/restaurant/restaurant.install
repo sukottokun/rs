@@ -26,8 +26,12 @@ function restaurant_schema() {
       'default' => ''
 		),
       'image' => array(
-    	'type' => 'blob',
-      'size' => 'big'
+    	'type' => 'int'
+		),
+      'timestamp' => array(
+      'type' => 'int',
+      'not null' => TRUE,
+      'default' => 0
 		),
     ),
   );
