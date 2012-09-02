@@ -75,7 +75,9 @@ function form_add_rest_submit($form, &$form_state) {
         'timestamp' => REQUEST_TIME,
     ))
           ->execute();
-
+  $file = file_load($form_state['values']['image']);
+  $file->status = FILE_STATUS_PERMANENT;
+  file_save($file);
 
   drupal_set_message(t('The form has been submitted.'));
 }
@@ -89,12 +91,9 @@ function page_restaurants () {
   $header = array('name', 'address','image');
   //output each result as a row
   foreach ($result as $row) {
-    $fid = $row->image; //seems to return the $fid I want
-    $image_object = file_load($fid); //not returnin and object
-    $path = $image_object->uri; // not working; not an object?
-
-
-  $table_rows[] = array(
+    $image_object = file_load($row->image); //returns object
+    $path = $image_object->uri; //gets path
+    $table_rows[] = array(
       'data' => array(
           'name' => array(
               'data'=>$row->name,
@@ -111,14 +110,10 @@ function page_restaurants () {
       )
   );
   }
-//$table_attributes = array('id' => 'restaurant display', 'align' => 'center');
+
 return theme('table', array(
     'header' => $header,
     'rows' => $table_rows,
     'id' => 'restaurants',
     'class' => 'articles',));
- // return array('#markup' => '<p>' . $record->name . '</p>');
-  //return array('#markup' => '<p>' . t('Simple page: The quick brown fox jumps
-    //over the lazy dog.') . '</p>');
-
 }
