@@ -13,33 +13,51 @@ function restaurant_menu() {
   $items['restaurant/add'] = array(
     'title' => 'Add a restaurant',
     'page callback' => 'drupal_get_form',
-    'page arguments' => array('form_add_rest'),
+    'page arguments' => array('restaurant_form_add_rest'),
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
   );
-  $items['restaurants'] = array(
-    'title' => 'Display, add, edit all restaurants',
-    'page callback' => 'page_restaurants',
+  $items['restaurant/%/modify/'] = array(
+    'title' => 'Edit a restaurant',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('restaurant_form_modify_rest'),
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
+  $items['restaurant/%/delete'] = array(
+    'title' => 'Delete a restaurant',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('restaurant_delete_confirm', 1),
+    'access callback' => TRUE,
+    'type' => MENU_NORMAL_ITEM,
+  );
+   $items['restaurants'] = array(
+    'title' => 'Display, add, edit, delete all restaurants',
+    'page callback' => 'restaurant_page_restaurants',
     'access callback' => TRUE,
   );
   return $items;
 }
 
-function form_add_rest($form, &$form_state) {
+function restaurant_form_add_rest($form, &$form_state, $operation = 'add', $fid = NULL) {
 
   $form['description'] = array(
     '#type' => 'item',
     '#title' => t('Enter the restaurant information below'),
   );
+
   $form['#attributes']['enctype'] = 'multipart/form-data';
+
   $form['name'] = array(
     '#type' => 'textfield',
     '#title' => t('Name'),
   );
+
   $form['address'] = array(
     '#type' => 'textfield',
     '#title' => t('Address'),
   );
+
   $form['image'] = array(
     '#title' => t('Image'),
     '#type' => 'managed_file',
@@ -47,22 +65,38 @@ function form_add_rest($form, &$form_state) {
     '#default_value' => variable_get('image', ''),
     '#upload_location' => 'public://restaurant_images/',
   );
-    $form['submit'] = array(
+
+  $form['record_operation'] = array(
+      '#type' => 'hidden',
+      '#value' => $operation,
+  );
+
+  $form['report'] = array(
+      '#type' => 'markup',
+      '#markup' => drupal_render(restaurant_page_restaurants()),
+      '#weight' => 10,
+  );
+
+  $form['submit'] = array(
     '#type' => 'submit',
     '#value' => 'Submit',
   );
+
+  if ($operation == 'modify' || $operation == 'delete') {
+    
+  }
   return $form;
 }
 
 //validation
 
 /**
- * Submit function for form_add_rest.
+ * Submit function for restaurant_form_add_rest.
  *
  * Adds a submit handler/function to our form to send a successful
  * completion message to the screen.
  */
-function form_add_rest_submit($form, &$form_state) {
+function restaurant_form_add_rest_submit($form, &$form_state) {
   $name = $form_state['values']['name'];
   $address = $form_state['values']['address'];
   $image = $form_state['values']['image'];
@@ -82,13 +116,13 @@ function form_add_rest_submit($form, &$form_state) {
   drupal_set_message(t('The form has been submitted.'));
 }
 
-function page_restaurants () {
-  $sql= 'SELECT name, address, image from {restaurants} ORDER BY timestamp DESC';
+function restaurant_page_restaurants () {
+  $sql= 'SELECT rid, name, address, image from {restaurants} ORDER BY timestamp DESC';
   $result = db_query($sql);
   $header = array();
   $row =  array();
   $table_rows = array();
-  $header = array('name', 'address','image');
+  $header = array('name', 'address','image', 'modify', 'delete');
   //output each result as a row
   foreach ($result as $row) {
     $image_object = file_load($row->image); //returns object
@@ -107,6 +141,12 @@ function page_restaurants () {
               'data'=> theme('image',array('path' => $path)),
               'class'=>'col-image',
           ),
+          'modify' => array(
+              'data' => l('Modify',"restaurant/" .$row->rid . "/modify"),
+          ),
+          'delete' => array(
+              'data' => l('Delete',"restaurant/" .$row->rid . "/delete"),
+          )
       )
   );
   }
@@ -117,3 +157,12 @@ return theme('table', array(
     'id' => 'restaurants',
     'class' => 'articles',));
 }
+
+function restaurant_delete_confirm(&$form, $form_state, $id) {
+  $form['#restaurant']['id'] = $id;
+  $name =  restaurant_get_name_from_id($id);
+
+  return confirm_form($form, "Are you sure", '<front>');
+}
+
+//function for saving
