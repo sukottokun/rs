@@ -26,8 +26,8 @@ function restaurant_menu() {
   );
   $items['restaurant/%/delete'] = array(
     'title' => 'Delete a restaurant',
-    'page callback' => 'drupal_get_form',
-    'page arguments' => array('restaurant_delete_confirm',1),
+    'page callback' => 'restaurant_page_delete',
+    'page arguments' => array(1),
     'access callback' => TRUE,
     'type' => MENU_NORMAL_ITEM,
   );
@@ -158,12 +158,21 @@ return theme('table', array(
     'class' => 'articles',));
 }
 
+/*
+ gave up on this
 function restaurant_delete_confirm($form, &$form_state, $id) {
 
   $form['#restaurant']['id'] = $id;
   //$name =  restaurant_get_name_from_id($id);
   dpr($form);
   return confirm_form($form, "Are you sure", '<front>');
+}
+ */
+
+function restaurant_page_delete($id) {
+
+dpr($id);
+  
 }
 
 //function for saving
